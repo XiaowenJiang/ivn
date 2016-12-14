@@ -25,7 +25,9 @@ namespaces:
         address: 192.168.88.101
         netmask: 255.255.255.0
     - ifname: einf1
+      type: static
       address: 169.254.0.1
+      netmask: 255.255.255.0
       pair: no
   - name: node-1
     interfaces:
@@ -38,6 +40,11 @@ namespaces:
         type: static
         address: 192.168.88.102
         netmask: 255.255.255.0
+    - ifname: einf1
+      type: static
+      address: 169.254.0.1
+      netmask: 255.255.255.0
+      pair: no
   - name: node-2
     interfaces:
     - ifname: einf0
@@ -48,7 +55,11 @@ namespaces:
         type: static
         address: 192.168.88.103
         netmask: 255.255.255.0
-
+    - ifname: einf1
+      type: static
+      address: 169.254.0.1
+      netmask: 255.255.255.0
+      pair: no
   - name: node-3
     interfaces:
     - ifname: einf0
@@ -60,4 +71,9 @@ namespaces:
         type: static
         address: 192.168.88.104
         netmask: 255.255.255.0
+    - ifname: einf1
+      type: static
+      address: 169.254.0.1
+      netmask: 255.255.255.0
+      pair: no
 

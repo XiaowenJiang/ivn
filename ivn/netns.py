@@ -78,6 +78,10 @@ class Interface(object):
         for key, val in self.__intf_info.items():
             if key == "ifname" or key == "type" or val is None:
                 continue
+
+            if key == "pair":
+                continue
+
             elif key == "bridge":
                 sub_content = ""
                 old_intf_info = self.__intf_info
@@ -119,14 +123,17 @@ class InfrasimNamespace(object):
         for intf in self.__ns_info["interfaces"]:
             # get name
             ifname = intf["ifname"]
-            global interface_index
-            self.create_ip_link_in_ns(ifname, "veth{}".format(interface_index))
-            if 'bridge' in intf:
-                self.create_bridge(intf=ifname)
-            self.__vswitch.add_port("veth{}".format(interface_index))
-            idx = self.ip.link_lookup(ifname="veth{}".format(interface_index))[0]
-            self.ip.link("set", index=idx, state="up")
-            interface_index += 1
+            if intf.get("pair") == "no":
+                create_single_virtual_intf_in_ns(ifname)
+            else:
+                global interface_index
+                self.create_ip_link_in_ns(ifname, "veth{}".format(interface_index))
+                if 'bridge' in intf:
+                    self.create_bridge(intf=ifname)
+                self.__vswitch.add_port("veth{}".format(interface_index))
+                idx = self.ip.link_lookup(ifname="veth{}".format(interface_index))[0]
+                self.ip.link("set", index=idx, state="up")
+                interface_index += 1
 
     def _create_namespace(self):
         if self.name in self.get_namespaces_list():
@@ -136,6 +143,15 @@ class InfrasimNamespace(object):
 
     def del_namespace(self):
         netns.remove(self.name)
+
+    def create_single_virtual_intf_in_ns(self, ifname):
+        if len(self.ip.link_lookup(ifname=ifname)) > 0:
+            print "ip link {} exists so not create it.".format(ifname)
+            return
+
+        self.main_ipdb.create(ifname=ifname, kind="veth").commit()
+        with self.main_ipdb.interfaces[ifname] as veth:
+            veth.net_ns_fd = self.name
 
     def create_ip_link_in_ns(self, ifname, peername):
         if len(self.ip.link_lookup(ifname=ifname)) > 0:
