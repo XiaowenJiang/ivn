@@ -123,8 +123,8 @@ class InfrasimNamespace(object):
         for intf in self.__ns_info["interfaces"]:
             # get name
             ifname = intf["ifname"]
-            if intf.get("pair") == "no":
-                create_single_virtual_intf_in_ns(ifname)
+            if intf.get("pair") is False:
+                self.create_single_virtual_intf_in_ns(ifname)
             else:
                 global interface_index
                 self.create_ip_link_in_ns(ifname, "veth{}".format(interface_index))
@@ -149,7 +149,7 @@ class InfrasimNamespace(object):
             print "ip link {} exists so not create it.".format(ifname)
             return
 
-        self.main_ipdb.create(ifname=ifname, kind="veth").commit()
+        self.main_ipdb.create(ifname=ifname, kind="dummy").commit()
         with self.main_ipdb.interfaces[ifname] as veth:
             veth.net_ns_fd = self.name
 
