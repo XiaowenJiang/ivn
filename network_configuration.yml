@@ -1,0 +1,63 @@
+---
+# root interfaces
+switches:
+  br-int:                   # internal switch
+    ifname: br-int
+    type: static
+    address: 192.168.88.1
+    netmask: 255.255.255.0
+  br-ex:                    # external switch
+    ifname: br-ex
+    type: static
+    address: 0.0.0.0
+    netmask: 255.255.255.0
+    ports:
+     - ifname: eth1
+namespaces:
+  - name: node-0
+    interfaces:
+    - ifname: einf0         # vNIC in namespce 
+      type: static
+      address: 0.0.0.0
+      bridge:
+        ifname: br0
+        type: static
+        address: 192.168.88.101
+        netmask: 255.255.255.0
+    - ifname: einf1
+      address: 169.254.0.1
+      pair: no
+  - name: node-1
+    interfaces:
+    - ifname: einf0
+      type: static
+      address: 0.0.0.0
+      netmask: 255.255.255.0
+      bridge:
+        ifname: br0
+        type: static
+        address: 192.168.88.102
+        netmask: 255.255.255.0
+  - name: node-2
+    interfaces:
+    - ifname: einf0
+      type: static
+      address: 0.0.0.0
+      bridge:
+        ifname: br0
+        type: static
+        address: 192.168.88.103
+        netmask: 255.255.255.0
+
+  - name: node-3
+    interfaces:
+    - ifname: einf0
+      type: static
+      address: 0.0.0.0
+      netmask: 255.255.255.0
+      bridge:
+        ifname: br0
+        type: static
+        address: 192.168.88.104
+        netmask: 255.255.255.0
+
