@@ -124,12 +124,12 @@ class InfrasimNamespace(object):
             # get name
             ifname = intf["ifname"]
             if intf.get("pair") is False:
-                self.create_single_virtual_intf_in_ns(ifname)
+                self.create_single_virtual_intf_in_ns(intf)
             else:
                 global interface_index
                 self.create_ip_link_in_ns(ifname, "veth{}".format(interface_index))
                 if 'bridge' in intf:
-                    self.create_bridge(intf=ifname)
+                    self.create_bridge(intf=ifname, br_name=intf['bridge']['ifname'])
                 self.__vswitch.add_port("veth{}".format(interface_index))
                 idx = self.ip.link_lookup(ifname="veth{}".format(interface_index))[0]
                 self.ip.link("set", index=idx, state="up")
@@ -144,7 +144,8 @@ class InfrasimNamespace(object):
     def del_namespace(self):
         netns.remove(self.name)
 
-    def create_single_virtual_intf_in_ns(self, ifname):
+    def create_single_virtual_intf_in_ns(self, intf):
+        ifname = intf['ifname']
         if len(self.ip.link_lookup(ifname=ifname)) > 0:
             print "ip link {} exists so not create it.".format(ifname)
             return
@@ -152,6 +153,9 @@ class InfrasimNamespace(object):
         self.main_ipdb.create(ifname=ifname, kind="dummy").commit()
         with self.main_ipdb.interfaces[ifname] as veth:
             veth.net_ns_fd = self.name
+
+        if 'bridge' in intf:
+            self.create_bridge(intf=ifname, br_name=intf['bridge']['ifname'])
 
     def create_ip_link_in_ns(self, ifname, peername):
         if len(self.ip.link_lookup(ifname=ifname)) > 0:
@@ -172,8 +176,9 @@ class InfrasimNamespace(object):
 
     def link_up_all(self):
         # setup lo
-        self.exec_cmd_in_namespace(["ifdown", "lo"])
-        self.exec_cmd_in_namespace(["ifup", "lo"])
+        # self.exec_cmd_in_namespace(["ifdown", "lo"])
+        # self.exec_cmd_in_namespace(["ifup", "lo"])
+        self.exec_cmd_in_namespace(["ip", "link", "set", "dev", "lo", "up"])
 
         for intf_info in self.__ns_info["interfaces"]:
             if "bridge" in intf_info:
@@ -184,12 +189,12 @@ class InfrasimNamespace(object):
                 self.exec_cmd_in_namespace(["ifdown", intf_info["ifname"]])
                 self.exec_cmd_in_namespace(["ifup", intf_info["ifname"]])
 
-    def create_bridge(self, intf="einf0"):
-        self.exec_cmd_in_namespace(["brctl", "addbr", "br0"])
-        self.exec_cmd_in_namespace(["brctl", "addif", "br0", intf])
-        self.exec_cmd_in_namespace(["brctl", "setfd", "br0", "0"])
-        self.exec_cmd_in_namespace(["brctl", "sethello", "br0", "1"])
-        self.exec_cmd_in_namespace(["brctl", "stp", "br0", "no"])
+    def create_bridge(self, intf="einf0", br_name="br0"):
+        self.exec_cmd_in_namespace(["brctl", "addbr", "{}".format(br_name)])
+        self.exec_cmd_in_namespace(["brctl", "addif", "{}".format(br_name), intf])
+        self.exec_cmd_in_namespace(["brctl", "setfd", "{}".format(br_name), "0"])
+        self.exec_cmd_in_namespace(["brctl", "sethello", "{}".format(br_name), "1"])
+        self.exec_cmd_in_namespace(["brctl", "stp", "{}".format(br_name), "no"])
         self.exec_cmd_in_namespace(["ifconfig", intf, "promisc"])
 
     def build_ns_configuration(self):
