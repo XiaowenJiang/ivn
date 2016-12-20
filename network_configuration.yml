@@ -14,7 +14,7 @@ switches:
     ports:
      - ifname: eno4
 namespaces:
-  - name: node0
+  - name: node1
     interfaces:
     - ifname: einf0         # vNIC in namespce 
       type: static
@@ -33,7 +33,7 @@ namespaces:
         address: 169.254.0.1
         netmask: 255.255.255.0
       pair: no
-  - name: node1
+  - name: node2
     interfaces:
     - ifname: einf0
       type: static
@@ -46,10 +46,14 @@ namespaces:
         netmask: 255.255.255.0
     - ifname: einf1
       type: static
-      address: 169.254.0.1
-      netmask: 255.255.255.0
+      address: 0.0.0.0
+      bridge:
+        ifname: br1
+        type: static
+        address: 169.254.0.1
+        netmask: 255.255.255.0
       pair: no
-  - name: node2
+  - name: node3
     interfaces:
     - ifname: einf0
       type: static
@@ -61,10 +65,14 @@ namespaces:
         netmask: 255.255.255.0
     - ifname: einf1
       type: static
-      address: 169.254.0.1
-      netmask: 255.255.255.0
+      address: 0.0.0.0
+      bridge:
+        ifname: br1
+        type: static
+        address: 169.254.0.1
+        netmask: 255.255.255.0
       pair: no
-  - name: node3
+  - name: node4
     interfaces:
     - ifname: einf0
       type: static
@@ -77,7 +85,10 @@ namespaces:
         netmask: 255.255.255.0
     - ifname: einf1
       type: static
-      address: 169.254.0.1
-      netmask: 255.255.255.0
+      address: 0.0.0.0
+      bridge:
+        ifname: br1
+        type: static
+        address: 169.254.0.1
+        netmask: 255.255.255.0
       pair: no
-
