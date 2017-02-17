@@ -76,7 +76,7 @@ class InfrasimvSwitch(object):
                     content += "\t{} {}\n".format(key, val)
         elif self.__vswitch_info["type"] == "dhcp":
             content += "auto {}\n".format(self.name)
-            content += "iface {} inet dhcp\n"
+            content += "iface {} inet dhcp\n".format(self.name)
         else:
             raise Exception("Unsupported method {}.".format(self.__vswitch_info["type"]))
 
