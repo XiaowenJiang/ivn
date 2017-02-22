@@ -142,7 +142,8 @@ class InfrasimNamespace(object):
         netns.create(self.name)
 
     def del_namespace(self):
-        netns.remove(self.name)
+        if self.name in netns.listnetns():
+            netns.remove(self.name)
 
     def create_single_virtual_intf_in_ns(self, intf):
         ifname = intf['ifname']
