@@ -1,5 +1,6 @@
 import subprocess
 import yaml
+import os
 
 
 def start_process(args):
@@ -36,8 +37,8 @@ class InfrasimvSwitchManager(object):
         self.__vswitch_ex.set_interface("phy-br-ex", "int-br-ex")
         self.__vswitch_int.set_interface("int-br-ex", "phy-br-ex")
 
-        self.__vswitch_int.build_one_vswitch()
         self.__vswitch_ex.build_one_vswitch()
+        self.__vswitch_int.build_one_vswitch()
 
     def delete(self):
         self.__vswitch_int = InfrasimvSwitch(self.__vswitch_info["switches"]["br-int"])
@@ -105,6 +106,7 @@ class InfrasimvSwitch(object):
         else:
             if start_process(["ovs-vsctl", "del-br", self.name])[0]:
                 raise Exception("fail to delete vswitch {}".format(self.name))
+            os.remove("/etc/network/interfaces.d/{}".format(self.name))
             print "vswitch {} is destroyed.".format(self.name)
 
     def add_port(self, ifname):
