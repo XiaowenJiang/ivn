@@ -85,7 +85,9 @@ class InfrasimvSwitch(object):
             f.write(content)
 
         start_process(["ifdown", self.name])
-        start_process(["ifup", self.name])
+        returncode, out, err = start_process(["ifup", self.name])
+        if returncode != 0:
+            raise Exception("Failed to if up {}\nError: ".format(self.name, err))
 
     def check_vswitch_exists(self):
         ret = start_process(["ovs-vsctl", "br-exists", self.name])[0]
