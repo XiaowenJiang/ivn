@@ -4,91 +4,38 @@ switches:
   br-int:                   # internal switch
     ifname: br-int
     type: static
-    address: 192.168.88.1
-    netmask: 255.255.255.0
+    address: 172.31.128.1
+    netmask: 255.255.252.0
+    ports:
+     - ifname: eth1
   br-ex:                    # external switch
     ifname: br-ex
     type: static
     address: 0.0.0.0
-    netmask: 255.255.255.0
-    ports:
-     - ifname: eno4
+    metmask: 255.255.255.0
 namespaces:
   - name: node1
     interfaces:
-    - ifname: einf0         # vNIC in namespce 
+    - ifname: einf0         # vNIC in namespace 
       type: static
       address: 0.0.0.0
       bridge:
         ifname: br0
-        type: static
-        address: 192.168.88.91
-        netmask: 255.255.255.0
-    - ifname: einf1
-      type: static
-      address: 0.0.0.0
-      bridge:
-        ifname: br1
-        type: static
-        address: 169.254.0.1
-        netmask: 255.255.255.0
-      pair: no
+        type: dhcp
   - name: node2
     interfaces:
-    - ifname: einf0
+    - ifname: einf0         # vNIC in namespace 
       type: static
       address: 0.0.0.0
-      netmask: 255.255.255.0
       bridge:
         ifname: br0
-        type: static
-        address: 192.168.88.92
-        netmask: 255.255.255.0
-    - ifname: einf1
-      type: static
-      address: 0.0.0.0
-      bridge:
-        ifname: br1
-        type: static
-        address: 169.254.0.1
-        netmask: 255.255.255.0
-      pair: no
+        type: dhcp
   - name: node3
     interfaces:
-    - ifname: einf0
+    - ifname: einf0         # vNIC in namespace 
       type: static
       address: 0.0.0.0
       bridge:
         ifname: br0
-        type: static
-        address: 192.168.88.93
-        netmask: 255.255.255.0
-    - ifname: einf1
-      type: static
-      address: 0.0.0.0
-      bridge:
-        ifname: br1
-        type: static
-        address: 169.254.0.1
-        netmask: 255.255.255.0
-      pair: no
-  - name: node4
-    interfaces:
-    - ifname: einf0
-      type: static
-      address: 0.0.0.0
-      netmask: 255.255.255.0
-      bridge:
-        ifname: br0
-        type: static
-        address: 192.168.88.94
-        netmask: 255.255.255.0
-    - ifname: einf1
-      type: static
-      address: 0.0.0.0
-      bridge:
-        ifname: br1
-        type: static
-        address: 169.254.0.1
-        netmask: 255.255.255.0
-      pair: no
+        type: dhcp
+

@@ -34,8 +34,9 @@ class InfrasimvSwitchManager(object):
             print e.message
             return
 
-        self.__vswitch_ex.set_interface("phy-br-ex", "int-br-ex")
-        self.__vswitch_int.set_interface("int-br-ex", "phy-br-ex")
+        # jxw, comment out the patch
+        #self.__vswitch_ex.set_interface("phy-br-ex", "int-br-ex")
+        #self.__vswitch_int.set_interface("int-br-ex", "phy-br-ex")
 
         self.__vswitch_ex.build_one_vswitch()
         self.__vswitch_int.build_one_vswitch()

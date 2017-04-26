@@ -10,6 +10,10 @@ Install openvswitch:
 
     sudo apt-get install openvswitch-switch
 
+Install bridge utils
+
+    sudo apt-get install bridge-utils
+
 Install module dependencies:
 
     sudo pip install -r requirements.txt
