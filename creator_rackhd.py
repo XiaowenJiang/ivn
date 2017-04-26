@@ -5,13 +5,20 @@ from ivn.netns import InfrasimNamespaceManager
 import sys
 import os
 import time
+import fileinput
 
+dhcp_service = "isc-dhcp-server"
 
 if __name__ == "__main__":
     if sys.argv[1] == "create":
         vswitch_manager = InfrasimvSwitchManager("./network_configuration.yml")
         vswitch_manager.create()
-        os.system("service isc-dhcp-server restart")
+        os.system("service {} stop".format(dhcp_service))
+        for line in fileinput.input("/etc/default/isc-dhcp-server", inplace=1):
+            if "INTERFACES=" in line:
+                line = "INTERFACES=\"br-int\"\n"
+            sys.stdout.write(line)
+        os.system("service {} start".format(dhcp_service))
         time.sleep(3)
         inm = InfrasimNamespaceManager("./network_configuration.yml", vswitch_manager.get_vswitch_int())
         inm.create()
